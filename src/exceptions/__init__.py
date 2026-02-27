@@ -10,6 +10,7 @@ from src.exceptions.user import (
     UserAlreadyExist,
     UserGroupNotExist,
     UserPermissionDenied,
+    BaseUserException,
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "UserAlreadyExist",
     "UserGroupNotExist",
     "UserPermissionDenied",
+    "BaseUserException",
 ]
