@@ -1,6 +1,7 @@
 from src.database.models.user import (
     UserModel,
     UserGroupModel,
+    RefreshTokenModel,
 )
 from src.database.models.auction import (
     LotModel,
@@ -14,4 +15,5 @@ __all__ = [
     "CollectionModel",
     "LotModel",
     "AuctionModel",
+    "RefreshTokenModel",
 ]

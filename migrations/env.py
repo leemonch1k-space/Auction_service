@@ -11,6 +11,7 @@ from src.database import Base
 from src.database.models import (
     UserGroupModel,
     UserModel,
+    RefreshTokenModel,
     LotModel,
     CollectionModel,
     AuctionModel,

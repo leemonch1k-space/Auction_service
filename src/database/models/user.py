@@ -1,3 +1,4 @@
+from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 from typing import List, TYPE_CHECKING
 
@@ -7,10 +8,12 @@ from sqlalchemy import (
     ForeignKey,
     Enum,
     CheckConstraint,
-    Numeric
+    Numeric,
+    DateTime
 )
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 
+from src.config.settings import get_settings
 from src.database import Base
 from src.enums import UserGroupEnum
 from src.security import hash_password, verify_password
@@ -19,6 +22,7 @@ from src.security import hash_password, verify_password
 if TYPE_CHECKING:
     from src.database.models.auction import CollectionModel
 
+settings = get_settings()
 
 class UserGroupModel(Base):
     """
@@ -74,6 +78,11 @@ class UserModel(Base):
         cascade="all, delete-orphan",
         uselist=False
     )
+    refresh_tokens: Mapped[List["RefreshTokenModel"]] = relationship(
+        "RefreshTokenModel",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
     @property
     def password(self) -> None:
@@ -89,10 +98,62 @@ class UserModel(Base):
     def check_password(self, password: str) -> bool:
         return verify_password(password, self._hashed_password)
 
+    @classmethod
+    def create(
+        cls, login: str, raw_password: str, group_id: int | Mapped[int]
+    ) -> "UserModel":
+        """
+        This method simplifies the creation of a new user by handling
+        password hashing and setting required attributes.
+        """
+        user = cls(login=login, group_id=group_id)
+        user.password = raw_password
+        return user
+
     def has_group(self, group_name: UserGroupEnum) -> bool:
         return self.group.name == group_name
 
     def __repr__(self) -> str:
         return (
             f"<UserModel(id={self.id}, login={self.login}"
+        )
+
+
+class RefreshTokenModel(Base):
+    """Table model for refresh token"""
+    __tablename__ = "refresh_tokens"
+
+    id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    token: Mapped[str] = mapped_column(
+        String(512),
+        unique=True,
+        nullable=False,
+    )
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc) + timedelta(days=1),
+    )
+
+    user: Mapped[UserModel] = relationship(
+        "UserModel", back_populates="refresh_tokens"
+    )
+    @classmethod
+    def create(
+        cls, user_id: int | Mapped[int], token: str
+    ) -> "RefreshTokenModel":
+        expires_at = datetime.now(timezone.utc) + timedelta(
+            days=settings.REFRESH_TOKEN_DAYS
+        )
+        return cls(user_id=user_id, expires_at=expires_at, token=token)
+
+    def __repr__(self) -> str:
+        return (
+            f"<RefreshTokenModel(id={self.id}, "
+            f"token={self.token}, expires_at={self.expires_at})>"
         )

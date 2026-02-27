@@ -48,7 +48,7 @@ class CollectionModel(Base):
 
 
 class LotModel(Base):
-    """Table model for lots."""
+    """Table model for lot."""
     __tablename__ = "lots"
 
     id: Mapped[int] = mapped_column(
@@ -84,7 +84,7 @@ class LotModel(Base):
     )
 
 class AuctionModel(Base):
-    """Table model for auctions."""
+    """Table model for auction."""
     __tablename__ = "auctions"
 
     id: Mapped[int] = mapped_column(
