@@ -3,5 +3,5 @@ from src.enums.auction import AuctionStageEnum
 
 __all__ = [
     "UserGroupEnum",
-    "UserGroupEnum",
+    "AuctionStageEnum",
 ]
