@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, status, HTTPException
 from fastapi.params import Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.crud import (
@@ -9,8 +10,8 @@ from src.crud import (
     login_user,
     refresh_token,
 )
-from src.config import get_jwt_manager, Settings, get_db
-from src.config.settings import get_settings
+from src.config.dependencies import get_jwt_manager, get_db
+from src.config.settings import get_settings, Settings
 from src.exceptions import (
     BaseUserException,
     IncorrectCredentials,
@@ -63,14 +64,18 @@ async def login(
     db: Annotated[AsyncSession, Depends(get_db)],
     jwt_manager: Annotated[JWTAuthManagerInterface, Depends(get_jwt_manager)],
     settings: Annotated[Settings, Depends(get_settings)],
-    login_data: UserLoginSchema,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> LoginResponseSchema:
+    user_data = UserLoginSchema(
+        login=form_data.username,
+        password=form_data.password
+    )
     try:
         result = await login_user(
             db=db,
             jwt_manager=jwt_manager,
             settings=settings,
-            login_data=login_data,
+            login_data=user_data,
         )
         return result
     except IncorrectCredentials as error:
