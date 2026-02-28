@@ -7,7 +7,18 @@ from src.schemas.user import (
     RefreshTokenSchema,
     RefreshTokenResponseSchema
 )
-
+from src.schemas.auction import (
+    CreateAuctionSchema,
+    AuctionResponseSchema,
+    LotCreateSchema,
+    LotResponseSchema,
+    LotSchema,
+    CollectionResponseSchema,
+    AuctionListSchema,
+    MakeBetSchema,
+    MakeBetResponseSchema,
+    AuctionItemSchema
+)
 
 __all__ = [
     "UserReadSchema",
@@ -17,4 +28,14 @@ __all__ = [
     "LoginResponseSchema",
     "RefreshTokenSchema",
     "RefreshTokenResponseSchema",
+    "CreateAuctionSchema",
+    "AuctionResponseSchema",
+    "LotCreateSchema",
+    "LotResponseSchema",
+    "LotSchema",
+    "CollectionResponseSchema",
+    "AuctionListSchema",
+    "MakeBetSchema",
+    "MakeBetResponseSchema",
+    "AuctionItemSchema",
 ]
