@@ -10,7 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.models import (
     UserModel,
     UserGroupModel,
-    RefreshTokenModel, CollectionModel,
+    RefreshTokenModel,
+    CollectionModel,
 )
 from src.enums import (
     UserGroupEnum,
@@ -28,8 +29,8 @@ from src.schemas import (
     RefreshTokenSchema,
     RefreshTokenResponseSchema,
 )
-from src.config.settings import get_settings
-from src.config import get_jwt_manager, Settings, get_db
+from src.config.settings import get_settings, Settings
+from src.config.dependencies import get_jwt_manager, get_db
 from src.security import JWTAuthManagerInterface
 
 
@@ -87,6 +88,7 @@ async def create_new_user(
     return UserReadSchema(
         id=user.id,
         login=user.login,
+        permission=group_name
     )
 
 async def login_user(
