@@ -18,16 +18,16 @@ class UserCreateSchema(UserBaseSchema):
     def validate_login(cls, v: str) -> str:
         try:
             return validate_login(login=v)
-        except ValueError as e:
-            raise IncorrectLoginError(str(e))
+        except ValueError as error:
+            raise IncorrectLoginError(str(error))
 
     @field_validator("password")
     @classmethod
     def validate_password(cls, v: str) -> str:
         try:
             return validate_password(password=v)
-        except ValueError as e:
-            raise IncorrectPasswordError(str(e))
+        except ValueError as error:
+            raise IncorrectPasswordError(str(error))
 
 
 class UserReadSchema(UserBaseSchema):
