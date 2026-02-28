@@ -1,10 +1,11 @@
 import os
 from typing import Any, AsyncGenerator, Annotated
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
+from starlette import status
 
 from src.config.settings import BaseAppSettings, get_settings
 from src.database.engine import AsyncSessionLocal
@@ -35,12 +36,15 @@ async def get_authenticated_user(
     try:
         user_data = jwt_manager.decode_access_token(token)
     except (TokenExpiredError, InvalidTokenError):
-        raise
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token Invalid or expired"
+        )
 
     user_id = user_data.get("user_id")
 
     return await db.get(
         UserModel,
         user_id,
-        options=[joinedload(UserModel.group)],
+        options=[joinedload(UserModel.group), joinedload(UserModel.collection)],
     )
