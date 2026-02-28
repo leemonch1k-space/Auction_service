@@ -26,15 +26,16 @@ if TYPE_CHECKING:
 
 class CollectionModel(Base):
     """Table model for lots storage."""
+
     __tablename__ = "collections"
 
     id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True
+        Integer,
+        primary_key=True,
+        autoincrement=True
     )
     owner_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"),
-        unique=True,
-        nullable=False
+        ForeignKey("users.id"), unique=True, nullable=False
     )
 
     lots: Mapped[List["LotModel"]] = relationship(
@@ -43,12 +44,14 @@ class CollectionModel(Base):
         cascade="all, delete-orphan",
     )
     user: Mapped["UserModel"] = relationship(
-        "UserModel", back_populates="collection"
+        "UserModel",
+        back_populates="collection"
     )
 
 
 class LotModel(Base):
     """Table model for lot."""
+
     __tablename__ = "lots"
 
     id: Mapped[int] = mapped_column(
@@ -58,15 +61,13 @@ class LotModel(Base):
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(
-        Text,
-        nullable=False,
-        default="No description provided"
+        Text, nullable=False, default="No description provided"
     )
     price: Mapped[Decimal] = mapped_column(
         Numeric(precision=10, scale=2),
         CheckConstraint("price > 0", name="check_lot_price_positive"),
         nullable=False,
-        default=0.00
+        default=0.00,
     )
     is_on_auction: Mapped[bool] = mapped_column(
         Boolean,
@@ -74,17 +75,17 @@ class LotModel(Base):
         nullable=False
     )
     collection_id: Mapped[int] = mapped_column(
-        ForeignKey("collections.id"),
-        nullable=False
+        ForeignKey("collections.id"), nullable=False
     )
 
     collection: Mapped["CollectionModel"] = relationship(
-        "CollectionModel",
-        back_populates="lots"
+        "CollectionModel", back_populates="lots"
     )
+
 
 class AuctionModel(Base):
     """Table model for auction."""
+
     __tablename__ = "auctions"
 
     id: Mapped[int] = mapped_column(
@@ -104,36 +105,34 @@ class AuctionModel(Base):
     lot_price: Mapped[Decimal] = mapped_column(
         Numeric(precision=10, scale=2),
         CheckConstraint("lot_price > 0", name="check_auction_price_positive"),
-        nullable=False
+        nullable=False,
     )
     current_price: Mapped[Decimal] = mapped_column(
         Numeric(precision=10, scale=2),
-        CheckConstraint("current_price > 0", name="check_auction_current_price_positive"),
-        nullable=False
+        CheckConstraint(
+            "current_price > 0", name="check_auction_current_price_positive"
+        ),
+        nullable=False,
     )
     lot_id: Mapped[int] = mapped_column(ForeignKey("lots.id"), nullable=False)
     bid_step: Mapped[Decimal] = mapped_column(
         Numeric(precision=7, scale=2),
         CheckConstraint("bid_step > 0", name="check_bid_step_positive"),
-        nullable=False
+        nullable=False,
     )
     top_bidder_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id"),
-        nullable=True
+        ForeignKey("users.id"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
+        DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     end_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=get_24h_from_now,
-        nullable=False
+        DateTime(timezone=True), default=get_24h_from_now, nullable=False
     )
 
     creator: Mapped["UserModel"] = relationship(
-        "UserModel", foreign_keys=[creator_id]
+        "UserModel",
+        foreign_keys=[creator_id]
     )
     top_bidder: Mapped["UserModel"] = relationship(
         "UserModel", foreign_keys=[top_bidder_id]

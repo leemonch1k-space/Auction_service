@@ -9,6 +9,7 @@ async def _run_cleanup():
     async with task_db_session() as db:
         await remove_expired_tokens(token_type=RefreshTokenModel, db=db)
 
+
 @celery_instance.task(name="remove_expired_refresh_tokens_task")
 def remove_expired_refresh_tokens_task() -> None:
     """

@@ -22,7 +22,8 @@ from src.exceptions import (
     LotItemAlreadyOnSaleError,
     AuctionAlreadyEnded,
     SelfBetNotAllowed,
-    InsufficientBalance, BidBelowMinimum
+    InsufficientBalance,
+    BidBelowMinimum,
 )
 from src.schemas import (
     AuctionResponseSchema,
@@ -31,15 +32,18 @@ from src.schemas import (
     LotResponseSchema,
     CollectionResponseSchema,
     AuctionListSchema,
-    MakeBetSchema, MakeBetResponseSchema,
+    MakeBetSchema,
+    MakeBetResponseSchema,
 )
 from src.config.dependencies import get_db, get_authenticated_user
 from src.tasks.auction_tasks import send_lot_item_to_user_task
 
 
 async def get_user_collection(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
 ) -> CollectionResponseSchema:
     query = (
         select(CollectionModel)
@@ -48,7 +52,6 @@ async def get_user_collection(
     )
     db_collection = await db.scalar(query)
 
-
     if not db_collection:
         raise CollectionNotExist("Collection not exists!")
 
@@ -56,9 +59,11 @@ async def get_user_collection(
 
 
 async def create_new_lot_item(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
-        lot_data: LotCreateSchema,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
+    lot_data: LotCreateSchema,
 ) -> LotResponseSchema:
     new_lot = LotModel(
         **lot_data.model_dump(),
@@ -77,9 +82,11 @@ async def create_new_lot_item(
 
 
 async def create_new_auction(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
-        auction_data: CreateAuctionSchema,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
+    auction_data: CreateAuctionSchema,
 ) -> AuctionResponseSchema:
     query = (
         select(LotModel)
@@ -87,21 +94,17 @@ async def create_new_auction(
         .where(
             and_(
                 LotModel.id == auction_data.lot_id,
-                CollectionModel.owner_id == authenticated_user_data.id
+                CollectionModel.owner_id == authenticated_user_data.id,
             )
         )
     )
     lot = await db.scalar(query)
 
     if not lot:
-        raise LotItemNotExists(
-            "Lot not found or you do not own this lot"
-        )
+        raise LotItemNotExists("Lot not found or you do not own this lot")
 
     if lot.is_on_auction:
-        raise LotItemAlreadyOnSaleError(
-            "This lot is already on auction"
-        )
+        raise LotItemAlreadyOnSaleError("This lot is already on auction")
 
     new_auction = AuctionModel(
         status=auction_data.status,
@@ -126,15 +129,17 @@ async def create_new_auction(
 
     execution_time = new_auction.end_at + datetime.timedelta(minutes=1)
     send_lot_item_to_user_task.apply_async(
-        args=[new_auction.id],
+        args=(new_auction.id,),
         eta=execution_time
     )
     return new_auction
 
 
 async def get_auctions(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
 ) -> AuctionListSchema:
     query = (
         select(AuctionModel)
@@ -143,20 +148,20 @@ async def get_auctions(
     )
     db_auctions = await db.scalars(query)
 
-    return AuctionListSchema(auctions=db_auctions.all())
+    return AuctionListSchema(
+        auctions=db_auctions.all()  # type: ignore[arg-type]
+    )
 
 
 async def make_bet(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: UserModel,
-        lot_id: int,
-        bet_data: MakeBetSchema
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: UserModel,
+    lot_id: int,
+    bet_data: MakeBetSchema,
 ) -> MakeBetResponseSchema:
-    query = (
-        select(AuctionModel)
-        .where(AuctionModel.lot_id == lot_id)
-        .with_for_update()
-    )
+    query = select(AuctionModel).where(
+        AuctionModel.lot_id == lot_id
+    ).with_for_update()
     auction_data = await db.scalar(query)
 
     if not auction_data:
@@ -188,5 +193,5 @@ async def make_bet(
     return MakeBetResponseSchema(
         lot_id=lot_id,
         bet=auction_data.current_price,
-        user_id=authenticated_user_data.id
+        user_id=authenticated_user_data.id,
     )

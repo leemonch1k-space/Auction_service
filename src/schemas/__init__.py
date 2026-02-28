@@ -5,7 +5,7 @@ from src.schemas.user import (
     UserGroupEnum,
     LoginResponseSchema,
     RefreshTokenSchema,
-    RefreshTokenResponseSchema
+    RefreshTokenResponseSchema,
 )
 from src.schemas.auction import (
     CreateAuctionSchema,
@@ -17,7 +17,7 @@ from src.schemas.auction import (
     AuctionListSchema,
     MakeBetSchema,
     MakeBetResponseSchema,
-    AuctionItemSchema
+    AuctionItemSchema,
 )
 
 __all__ = [

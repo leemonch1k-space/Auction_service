@@ -80,16 +80,13 @@ async def create_new_user(
 
         await db.commit()
         await db.refresh(user)
-        
+
     except IntegrityError:
         await db.rollback()
         raise
 
-    return UserReadSchema(
-        id=user.id,
-        login=user.login,
-        permission=group_name
-    )
+    return UserReadSchema(id=user.id, login=user.login, permission=group_name)
+
 
 async def login_user(
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -131,6 +128,7 @@ async def login_user(
         refresh_token=refresh_token,
         token_type="bearer",
     )
+
 
 async def refresh_token(
     token: RefreshTokenSchema,

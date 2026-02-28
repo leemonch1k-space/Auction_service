@@ -2,7 +2,10 @@ from pydantic import BaseModel, field_validator, ConfigDict
 
 from src.enums import UserGroupEnum
 from src.exceptions import IncorrectPasswordError, IncorrectLoginError
-from src.validators import validate_password_strength as validate_password, validate_login
+from src.validators import (
+    validate_password_strength as validate_password,
+    validate_login,
+)
 
 
 class UserBaseSchema(BaseModel):

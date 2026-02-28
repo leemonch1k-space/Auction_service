@@ -4,7 +4,8 @@ from fastapi import WebSocket
 
 class ConnectionManager:
     """Websocket connection manager"""
-    def __init__(self):
+
+    def __init__(self) -> None:
         self.active_connections: Dict[int, List[WebSocket]] = {}
 
     async def connect(self, websocket: WebSocket, lot_id: int):
@@ -29,6 +30,7 @@ class ConnectionManager:
                     self.active_connections[lot_id].remove(connection)
 
         if not self.active_connections[lot_id]:
-             del self.active_connections[lot_id]
+            del self.active_connections[lot_id]
+
 
 manager = ConnectionManager()

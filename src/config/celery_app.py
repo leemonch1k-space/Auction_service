@@ -1,8 +1,9 @@
+from typing import cast, Any
+
 from celery import Celery
 from celery.schedules import crontab
 
 from src.config.settings import get_settings
-
 
 settings = get_settings()
 
@@ -28,6 +29,6 @@ celery_instance.conf.update(
 celery_instance.conf.beat_schedule = {
     "clear-expired-refresh-tokens-every-hour": {
         "task": "remove_expired_refresh_tokens_task",
-        "schedule": crontab(minute=30),
+        "schedule": cast(Any, crontab(minute="30")),
     },
 }

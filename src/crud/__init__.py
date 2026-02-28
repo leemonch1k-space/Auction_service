@@ -3,7 +3,7 @@ from src.crud.auction import (
     get_user_collection,
     create_new_auction,
     create_new_lot_item,
-    get_auctions
+    get_auctions,
 )
 
 __all__ = [

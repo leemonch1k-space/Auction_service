@@ -8,13 +8,17 @@ class BaseAuctionException(Exception):
 
 class AuctionAlreadyEnded(BaseAuctionException):
     """Exception raised when user interacts with ended auction"""
+
     pass
 
 
 class SelfBetNotAllowed(BaseAuctionException):
     """Exception raised when user tries place a bet on his own lot"""
+
     pass
 
+
 class BidBelowMinimum(BaseAuctionException):
-    """Exception raised when a user tries to place a bid lower than the minimum required amount"""
+    """Exception raised when user tries to place a bid lower than the minimum required amount"""  # noqa
+
     pass

@@ -8,7 +8,9 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from src.crud import (
     get_user_collection,
-    create_new_lot_item, create_new_auction, get_auctions,
+    create_new_lot_item,
+    create_new_auction,
+    get_auctions,
 )
 from src.config.dependencies import get_db, get_authenticated_user
 from src.crud.auction import make_bet
@@ -16,7 +18,8 @@ from src.database.models import UserModel
 from src.exceptions import (
     BaseUserException,
     BaseCollectionException,
-    BaseLotException, BaseAuctionException,
+    BaseLotException,
+    BaseAuctionException,
 )
 from src.schemas import (
     AuctionResponseSchema,
@@ -25,7 +28,8 @@ from src.schemas import (
     LotResponseSchema,
     CollectionResponseSchema,
     AuctionListSchema,
-    MakeBetSchema, MakeBetResponseSchema,
+    MakeBetSchema,
+    MakeBetResponseSchema,
 )
 from src.websockets import manager
 
@@ -40,8 +44,10 @@ auction_router = APIRouter(prefix="/auction", tags=["Auction"])
     description="return authenticated user collection with lots",
 )
 async def get_collection(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
 ) -> CollectionResponseSchema:
     try:
         return await get_user_collection(
@@ -50,7 +56,8 @@ async def get_collection(
         )
     except BaseCollectionException as error:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
         )
 
 
@@ -62,9 +69,11 @@ async def get_collection(
     description="Create new lot item and save it to user's collection",
 )
 async def add_new_lot_item(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
-        lot_data: LotCreateSchema,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
+    lot_data: LotCreateSchema,
 ) -> LotResponseSchema:
     try:
         return await create_new_lot_item(
@@ -74,7 +83,8 @@ async def add_new_lot_item(
         )
     except IntegrityError as error:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
         )
 
 
@@ -83,22 +93,25 @@ async def add_new_lot_item(
     status_code=status.HTTP_201_CREATED,
     response_model=AuctionResponseSchema,
     summary="Begin new auction",
-    description="Create new auction instance to start new auction"
+    description="Create new auction instance to start new auction",
 )
 async def begin_auction(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
-        auction_data: CreateAuctionSchema,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
+    auction_data: CreateAuctionSchema,
 ) -> AuctionResponseSchema:
     try:
         return await create_new_auction(
             db=db,
             authenticated_user_data=authenticated_user_data,
-            auction_data=auction_data
+            auction_data=auction_data,
         )
     except (BaseLotException, IntegrityError) as error:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
         )
 
 
@@ -109,9 +122,11 @@ async def begin_auction(
     summary="Get active auctions",
     description="return list of running auction",
 )
-async def get_collection(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
+async def get_running_auctions(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
 ) -> AuctionListSchema:
     try:
         return await get_auctions(
@@ -120,54 +135,56 @@ async def get_collection(
         )
     except BaseCollectionException as error:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
         )
+
 
 @auction_router.post(
     "/lots/{lot_id}/bids/",
     status_code=status.HTTP_200_OK,
     response_model=MakeBetResponseSchema,
     summary="Place a bet",
-    description="Place a bet on auction lot"
+    description="Place a bet on auction lot",
 )
 async def place_bet(
-        db: Annotated[AsyncSession, Depends(get_db)],
-        authenticated_user_data: Annotated[UserModel, Depends(get_authenticated_user)],
-        lot_id: int,
-        bet_data: MakeBetSchema
+    db: Annotated[AsyncSession, Depends(get_db)],
+    authenticated_user_data: Annotated[
+        UserModel, Depends(get_authenticated_user)
+    ],  # noqa
+    lot_id: int,
+    bet_data: MakeBetSchema,
 ) -> MakeBetResponseSchema:
     try:
         result = await make_bet(
             db=db,
             authenticated_user_data=authenticated_user_data,
             lot_id=lot_id,
-            bet_data=bet_data
+            bet_data=bet_data,
         )
         notification = {
             "type": "new_bid",
             "lot_id": str(lot_id),
             "amount": float(bet_data.bet),
-            "bidder": str(authenticated_user_data.login)
+            "bidder": str(authenticated_user_data.login),
         }
         await manager.broadcast(lot_id, notification)
 
         return result
     except (
-            BaseUserException,
-            BaseAuctionException,
-            BaseLotException,
-            IntegrityError,
+        BaseUserException,
+        BaseAuctionException,
+        BaseLotException,
+        IntegrityError,
     ) as error:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
         )
 
 
 @auction_router.websocket("/ws/lots/{lot_id}/")
-async def connect_to_auction(
-        websocket: WebSocket,
-        lot_id: int
-):
+async def connect_to_auction(websocket: WebSocket, lot_id: int):
     """
     Public websocket.
     Any client can connect to retrieve updates about auction.

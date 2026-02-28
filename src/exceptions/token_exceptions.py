@@ -8,9 +8,11 @@ class BaseTokenException(Exception):
 
 class TokenExpiredError(BaseTokenException):
     """Exception raised when a token is expired"""
+
     pass
 
 
 class InvalidTokenError(BaseTokenException):
     """Exception raised when a token is invalid"""
+
     pass

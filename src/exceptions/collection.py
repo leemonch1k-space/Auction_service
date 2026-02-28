@@ -8,4 +8,5 @@ class BaseCollectionException(Exception):
 
 class CollectionNotExist(BaseCollectionException):
     """Exception raised when collection not found"""
+
     pass

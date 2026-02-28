@@ -3,7 +3,6 @@ from sqlalchemy.orm import declarative_base
 
 from src.config.settings import get_settings
 
-
 settings = get_settings()
 
 
@@ -19,9 +18,7 @@ engine = create_async_engine(
 )
 
 AsyncSessionLocal = async_sessionmaker(
-    bind=engine,
-    expire_on_commit=False,
-    autoflush=False
+    bind=engine, expire_on_commit=False, autoflush=False
 )
 
 Base = declarative_base()

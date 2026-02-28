@@ -15,9 +15,11 @@ from src.security import JWTAuthManagerInterface, JWTAuthManager
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/accounts/login/")
 
+
 async def get_db() -> AsyncGenerator[AsyncSession, Any]:
     async with AsyncSessionLocal() as session:
         yield session
+
 
 def get_jwt_manager(
     settings: Annotated[BaseAppSettings, Depends(get_settings)],
@@ -27,6 +29,7 @@ def get_jwt_manager(
         secret_key_refresh=settings.SECRET_KEY_REFRESH,
         algorithm=settings.JWT_SIGNING_ALGORITHM,
     )
+
 
 async def get_authenticated_user(
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -46,5 +49,8 @@ async def get_authenticated_user(
     return await db.get(
         UserModel,
         user_id,
-        options=[joinedload(UserModel.group), joinedload(UserModel.collection)],
+        options=[
+            joinedload(UserModel.group),
+            joinedload(UserModel.collection)
+        ],
     )

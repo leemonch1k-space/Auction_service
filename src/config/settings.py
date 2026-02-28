@@ -17,7 +17,6 @@ class BaseAppSettings(BaseSettings):
     ENVIRONMENT: str = "placeholder_environment"
     API_PREFIX: str = "/api/"
 
-
     ACCESS_KEY_TIMEDELTA_MINUTES: int = 60
     REFRESH_TOKEN_DAYS: int = 7
 
@@ -45,34 +44,34 @@ class DevSettings(BaseAppSettings):
 
 class Settings(BaseAppSettings):
     """Main settings: postgres"""
+
     ENVIRONMENT: str = "docker"
 
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER")
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_HOST: str = os.getenv("POSTGRES_HOST")
-    POSTGRES_DB_PORT: int = os.getenv("POSTGRES_DB_PORT")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB")
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "admin")
+    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "password")
+    POSTGRES_HOST: str = os.getenv("POSTGRES_HOST", "postgres_db")
+    POSTGRES_DB_PORT: int = int(os.getenv("POSTGRES_DB_PORT", 5432))
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "auction_db")
 
-    REDIS_HOST: str = os.getenv("REDIS_HOST")
-    REDIS_PORT: int = os.getenv("REDIS_PORT")
+    REDIS_HOST: str = os.getenv("REDIS_HOST", "redis_db")
+    REDIS_PORT: int = int(os.getenv("REDIS_PORT", 6379))
 
     SECRET_KEY_ACCESS: str = Field(
         default_factory=lambda: os.getenv(
-            "SECRET_KEY_ACCESS", os.urandom(32).hex()
+            "SECRET_KEY_ACCESS",
+            os.urandom(32).hex()
         )
     )
     SECRET_KEY_REFRESH: str = Field(
         default_factory=lambda: os.getenv(
-            "SECRET_KEY_REFRESH", os.urandom(32).hex()
-        )
+            "SECRET_KEY_REFRESH",
+            os.urandom(32).hex())
     )
     JWT_SIGNING_ALGORITHM: str = Field(
-        default_factory=lambda: os.getenv(
-            "JWT_SIGNING_ALGORITHM", "HS256"
-        )
+        default_factory=lambda: os.getenv("JWT_SIGNING_ALGORITHM", "HS256")
     )
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def DATABASE_URL(self) -> str:
         return (

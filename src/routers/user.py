@@ -49,7 +49,8 @@ async def create_account(
         )
     except BaseUserException as error:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
         )
 
 
@@ -80,7 +81,8 @@ async def login(
         return result
     except IncorrectCredentials as error:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
         )
 
 

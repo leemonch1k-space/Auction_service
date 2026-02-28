@@ -14,10 +14,7 @@ from src.websockets import manager
 logger = get_task_logger(__name__)
 
 
-async def send_lot_to_winner(
-        auction_id: int,
-        db: AsyncSession
-) -> None:
+async def send_lot_to_winner(auction_id: int, db: AsyncSession) -> None:
     auction_data = await db.get(AuctionModel, auction_id)
     if not auction_data:
         print(f"Auction {auction_id} not found.")
@@ -50,14 +47,13 @@ async def send_lot_to_winner(
     notification = {
         "type": "info",
         "winner": str(winner.login),
-        "message": "The auction has ended, praise the winner!"
+        "message": "The auction has ended, praise the winner!",
     }
     await manager.broadcast(auction_data.lot_id, notification)
 
     # as another option could be removed by another task
     await db.delete(auction_data)
     logger.info(f"Auction {auction_id} instance deleted.")
-
 
     await db.commit()
     logger.info(f"Auction {auction_id} processed successfully.")

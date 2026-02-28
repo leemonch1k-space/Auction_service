@@ -9,7 +9,7 @@ from sqlalchemy import (
     Enum,
     CheckConstraint,
     Numeric,
-    DateTime
+    DateTime,
 )
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 
@@ -18,27 +18,31 @@ from src.database import Base
 from src.enums import UserGroupEnum
 from src.security import hash_password, verify_password
 
-
 if TYPE_CHECKING:
     from src.database.models.auction import CollectionModel
 
 settings = get_settings()
 
+
 class UserGroupModel(Base):
     """
-        Table model for user's permission group.
+    Table model for user's permission group.
     """
+
     __tablename__ = "user_groups"
 
     id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True
+        Integer,
+        primary_key=True,
+        autoincrement=True
     )
     name: Mapped[UserGroupEnum] = mapped_column(
         Enum(UserGroupEnum), nullable=False, unique=True
     )
 
     users: Mapped[List["UserModel"]] = relationship(
-        "UserModel", back_populates="group"
+        "UserModel",
+        back_populates="group"
     )
 
     def __repr__(self) -> str:
@@ -47,9 +51,11 @@ class UserGroupModel(Base):
 
 class UserModel(Base):
     """
-        Table model for user.
-        As simplification i didn't do a lot for it, so it is just a simple model for user
+    Table model for user.
+    As simplification i didn't do a lot for it,
+    so it is just a simple model for user
     """
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -63,7 +69,7 @@ class UserModel(Base):
         Numeric(precision=10, scale=2),
         CheckConstraint("balance >= 0", name="check_balance_positive"),
         nullable=False,
-        default=0.00
+        default=0.00,
     )
     group_id: Mapped[int] = mapped_column(
         ForeignKey("user_groups.id", ondelete="CASCADE"), nullable=False
@@ -76,7 +82,7 @@ class UserModel(Base):
         "CollectionModel",
         back_populates="user",
         cascade="all, delete-orphan",
-        uselist=False
+        uselist=False,
     )
     refresh_tokens: Mapped[List["RefreshTokenModel"]] = relationship(
         "RefreshTokenModel",
@@ -86,9 +92,7 @@ class UserModel(Base):
 
     @property
     def password(self) -> None:
-        raise AttributeError(
-            "Password is write-only."
-        )
+        raise AttributeError("Password is write-only.")
 
     @password.setter
     def password(self, password: str) -> None:
@@ -114,17 +118,18 @@ class UserModel(Base):
         return self.group.name == group_name
 
     def __repr__(self) -> str:
-        return (
-            f"<UserModel(id={self.id}, login={self.login}"
-        )
+        return f"<UserModel(id={self.id}, login={self.login}"
 
 
 class RefreshTokenModel(Base):
     """Table model for refresh token"""
+
     __tablename__ = "refresh_tokens"
 
     id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True
+        Integer,
+        primary_key=True,
+        autoincrement=True
     )
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), nullable=False
@@ -141,11 +146,15 @@ class RefreshTokenModel(Base):
     )
 
     user: Mapped[UserModel] = relationship(
-        "UserModel", back_populates="refresh_tokens"
+        "UserModel",
+        back_populates="refresh_tokens"
     )
+
     @classmethod
     def create(
-        cls, user_id: int | Mapped[int], token: str
+            cls,
+            user_id: int | Mapped[int],
+            token: str
     ) -> "RefreshTokenModel":
         expires_at = datetime.now(timezone.utc) + timedelta(
             days=settings.REFRESH_TOKEN_DAYS

@@ -8,9 +8,11 @@ class BaseLotException(Exception):
 
 class LotItemNotExists(BaseLotException):
     """Exception raised when lot item not found"""
+
     pass
 
 
 class LotItemAlreadyOnSaleError(BaseLotException):
     """Exception raised when lot item already on auction"""
+
     pass

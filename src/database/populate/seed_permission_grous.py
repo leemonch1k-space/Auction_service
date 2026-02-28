@@ -8,6 +8,7 @@ from src.config.dependencies import get_db
 from src.database.models import UserGroupModel
 from src.enums import UserGroupEnum
 
+
 # For local test only
 async def seed_groups(db: Annotated[AsyncSession, Depends(get_db)]) -> None:
     for group_name in UserGroupEnum:

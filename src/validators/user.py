@@ -5,9 +5,7 @@ def validate_password_strength(password: str) -> str:
     if len(password) < 8:
         raise ValueError("Password must contain at least 8 characters.")
     if not re.search(r"[A-Z]", password):
-        raise ValueError(
-            "Password must contain at least one uppercase letter."
-        )
+        raise ValueError("Password must contain at least one uppercase letter.") # noqa
     if not re.search(r"[a-z]", password):
         raise ValueError("Password must contain at least one lower letter.")
     if not re.search(r"\d", password):
@@ -19,11 +17,15 @@ def validate_password_strength(password: str) -> str:
         )
     return password
 
+
 def validate_login(login: str) -> str:
     if not (6 <= len(login) <= 30):
         raise ValueError("Login must be between 6 and 30 characters.")
     if re.search(r"[^a-zA-Z0-9]", login):
-        raise ValueError("Login must contain only letters and numbers (no symbols or spaces)")
+        raise ValueError(
+            "Login must contain only letters and numbers "
+            "(no symbols or spaces)"
+        )
     if len(re.findall(r"[a-zA-Z]", login)) < 5:
         raise ValueError("Login must contain at least 5 letters")
 

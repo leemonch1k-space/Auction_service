@@ -6,13 +6,11 @@ from celery.utils.log import get_task_logger
 
 from src.database.models import RefreshTokenModel
 
-
 logger = get_task_logger(__name__)
 
 
 async def remove_expired_tokens(
-    token_type: type[RefreshTokenModel],
-    db: AsyncSession
+    token_type: type[RefreshTokenModel], db: AsyncSession
 ) -> None:
     stmt = delete(token_type).where(
         token_type.expires_at < datetime.now(timezone.utc)

@@ -1,13 +1,17 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    create_async_engine,
+    async_sessionmaker
+)
 from sqlalchemy.pool import NullPool
 
 from src.config.settings import get_settings
 
-
 settings = get_settings()
+
 
 @asynccontextmanager
 async def task_db_session() -> AsyncGenerator[AsyncSession, None]:
@@ -21,9 +25,7 @@ async def task_db_session() -> AsyncGenerator[AsyncSession, None]:
     )
 
     session_maker = async_sessionmaker(
-        bind=engine,
-        expire_on_commit=False,
-        autoflush=False
+        bind=engine, expire_on_commit=False, autoflush=False
     )
 
     async with session_maker() as session:
