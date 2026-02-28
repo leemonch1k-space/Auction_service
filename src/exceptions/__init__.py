@@ -11,6 +11,22 @@ from src.exceptions.user import (
     UserGroupNotExist,
     UserPermissionDenied,
     BaseUserException,
+    InsufficientBalance,
+)
+from src.exceptions.collection import (
+    BaseCollectionException,
+    CollectionNotExist
+)
+from src.exceptions.lot import (
+    BaseLotException,
+    LotItemNotExists,
+    LotItemAlreadyOnSaleError,
+)
+from src.exceptions.auction import (
+    BaseAuctionException,
+    AuctionAlreadyEnded,
+    SelfBetNotAllowed,
+    BidBelowMinimum,
 )
 
 __all__ = [
@@ -23,5 +39,15 @@ __all__ = [
     "UserAlreadyExist",
     "UserGroupNotExist",
     "UserPermissionDenied",
+    "InsufficientBalance",
     "BaseUserException",
+    "BaseCollectionException",
+    "CollectionNotExist",
+    "BaseLotException",
+    "LotItemNotExists",
+    "LotItemAlreadyOnSaleError",
+    "BaseAuctionException",
+    "AuctionAlreadyEnded",
+    "SelfBetNotAllowed",
+    "BidBelowMinimum",
 ]

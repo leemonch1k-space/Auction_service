@@ -32,3 +32,7 @@ class IncorrectCredentials(BaseUserException):
 
 class UserPermissionDenied(BaseUserException):
     pass
+
+
+class InsufficientBalance(BaseUserException):
+    pass
