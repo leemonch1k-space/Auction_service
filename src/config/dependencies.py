@@ -1,4 +1,3 @@
-import os
 from typing import Any, AsyncGenerator, Annotated
 
 from fastapi import Depends, HTTPException
@@ -13,10 +12,13 @@ from src.database.models import UserModel
 from src.exceptions import TokenExpiredError, InvalidTokenError
 from src.security import JWTAuthManagerInterface, JWTAuthManager
 
+# Dependencies
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/accounts/login/")
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, Any]:
+    """Dependency for getting async db session"""
     async with AsyncSessionLocal() as session:
         yield session
 
@@ -24,6 +26,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, Any]:
 def get_jwt_manager(
     settings: Annotated[BaseAppSettings, Depends(get_settings)],
 ) -> JWTAuthManagerInterface:
+    """Dependency for getting jwt manager."""
     return JWTAuthManager(
         secret_key_access=settings.SECRET_KEY_ACCESS,
         secret_key_refresh=settings.SECRET_KEY_REFRESH,
@@ -36,6 +39,7 @@ async def get_authenticated_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     jwt_manager: Annotated[JWTAuthManagerInterface, Depends(get_jwt_manager)],
 ) -> type[UserModel] | None:
+    """Dependency for getting authenticated user instance."""
     try:
         user_data = jwt_manager.decode_access_token(token)
     except (TokenExpiredError, InvalidTokenError):

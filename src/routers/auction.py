@@ -49,6 +49,7 @@ async def get_collection(
         UserModel, Depends(get_authenticated_user)
     ],  # noqa
 ) -> CollectionResponseSchema:
+    """Controller for getting user's storage."""
     try:
         return await get_user_collection(
             db=db,
@@ -75,6 +76,7 @@ async def add_new_lot_item(
     ],  # noqa
     lot_data: LotCreateSchema,
 ) -> LotResponseSchema:
+    """Controller for creating new lot item."""
     try:
         return await create_new_lot_item(
             db=db,
@@ -102,6 +104,7 @@ async def begin_auction(
     ],  # noqa
     auction_data: CreateAuctionSchema,
 ) -> AuctionResponseSchema:
+    """Controller for creating new auction."""
     try:
         return await create_new_auction(
             db=db,
@@ -155,6 +158,7 @@ async def place_bet(
     lot_id: int,
     bet_data: MakeBetSchema,
 ) -> MakeBetResponseSchema:
+    """Controller for place bet on lot."""
     try:
         result = await make_bet(
             db=db,

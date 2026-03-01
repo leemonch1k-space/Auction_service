@@ -5,6 +5,8 @@ from celery.schedules import crontab
 
 from src.config.settings import get_settings
 
+# Celery main settings
+
 settings = get_settings()
 
 celery_instance = Celery(

@@ -7,6 +7,7 @@ from src.enums import AuctionStageEnum
 
 
 class LotCreateSchema(BaseModel):
+    """Schema for creating lot item instance."""
     name: str
     description: str
     price: Decimal = Field(gt=0, decimal_places=2)
@@ -20,6 +21,7 @@ class LotCreateSchema(BaseModel):
 
 
 class LotSchema(BaseModel):
+    """Base lot schema."""
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -28,11 +30,13 @@ class LotSchema(BaseModel):
 
 
 class LotResponseSchema(LotSchema):
+    """Schema for lot response."""
     price: Decimal
     is_on_auction: bool
 
 
 class CollectionResponseSchema(BaseModel):
+    """Schema for collection response."""
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -40,12 +44,14 @@ class CollectionResponseSchema(BaseModel):
 
 
 class CreateAuctionSchema(BaseModel):
+    """Schema for creating auction instance."""
     status: AuctionStageEnum = AuctionStageEnum.RUNNING
     bid_step: Decimal = Field(gt=0, max_digits=7, decimal_places=2)
     lot_id: int
 
 
 class AuctionResponseSchema(BaseModel):
+    """Schema for auction response."""
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -59,6 +65,7 @@ class AuctionResponseSchema(BaseModel):
 
 
 class AuctionItemSchema(BaseModel):
+    """Schema for auction item."""
     model_config = ConfigDict(from_attributes=True)
     id: int
     status: AuctionStageEnum
@@ -68,14 +75,17 @@ class AuctionItemSchema(BaseModel):
 
 
 class AuctionListSchema(BaseModel):
+    """Schema for auction instance list response."""
     auctions: list[AuctionItemSchema]
 
 
 class MakeBetSchema(BaseModel):
+    """Schema for placing bet."""
     bet: Decimal
 
 
 class MakeBetResponseSchema(BaseModel):
+    """Schema for bet response."""
     lot_id: int
     bet: Decimal
     user_id: int

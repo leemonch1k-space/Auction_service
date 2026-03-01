@@ -38,6 +38,7 @@ async def get_user_by_login(
     db: Annotated[AsyncSession, Depends(get_db)],
     login: str,
 ) -> UserModel | None:
+    """support method for getting user instance by user logic."""
     result = await db.execute(
         select(UserModel)
         .where(UserModel.login == login)
@@ -51,6 +52,7 @@ async def create_new_user(
     db: Annotated[AsyncSession, Depends(get_db)],
     user_data: UserCreateSchema,
 ) -> UserReadSchema:
+    """Crud for creating new user."""
     existing_user = await get_user_by_login(db=db, login=user_data.login)
 
     if existing_user:
@@ -94,6 +96,10 @@ async def login_user(
     settings: Annotated[Settings, Depends(get_settings)],
     login_data: UserLoginSchema,
 ) -> LoginResponseSchema:
+    """
+    Crud for user authentification.
+    Compatible with Swagger authorization.
+    """
     login = login_data.login
     user = await get_user_by_login(db=db, login=login)
     if not user:
@@ -135,6 +141,7 @@ async def refresh_token(
     jwt_manager: Annotated[JWTAuthManagerInterface, Depends(get_jwt_manager)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> RefreshTokenResponseSchema:
+    """Crud for getting access token using refresh token."""
     payload = jwt_manager.decode_refresh_token(token.refresh_token)
 
     user_id = payload.get("user_id")

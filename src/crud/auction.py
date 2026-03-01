@@ -45,6 +45,7 @@ async def get_user_collection(
         UserModel, Depends(get_authenticated_user)
     ],  # noqa
 ) -> CollectionResponseSchema:
+    """Crud for getting user lot storage."""
     query = (
         select(CollectionModel)
         .where(CollectionModel.owner_id == authenticated_user_data.id)
@@ -65,6 +66,7 @@ async def create_new_lot_item(
     ],  # noqa
     lot_data: LotCreateSchema,
 ) -> LotResponseSchema:
+    """Crud for creating new lot item."""
     new_lot = LotModel(
         **lot_data.model_dump(),
         collection_id=authenticated_user_data.collection.id
@@ -88,6 +90,7 @@ async def create_new_auction(
     ],  # noqa
     auction_data: CreateAuctionSchema,
 ) -> AuctionResponseSchema:
+    """Crud for creating new auction."""
     query = (
         select(LotModel)
         .join(CollectionModel)
@@ -141,6 +144,7 @@ async def get_auctions(
         UserModel, Depends(get_authenticated_user)
     ],  # noqa
 ) -> AuctionListSchema:
+    """Crud for getting running auctions."""
     query = (
         select(AuctionModel)
         .where(AuctionModel.status == AuctionStageEnum.RUNNING)
@@ -159,6 +163,7 @@ async def make_bet(
     lot_id: int,
     bet_data: MakeBetSchema,
 ) -> MakeBetResponseSchema:
+    """Crud for placing bet on lot."""
     query = select(AuctionModel).where(
         AuctionModel.lot_id == lot_id
     ).with_for_update()

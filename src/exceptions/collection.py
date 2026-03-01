@@ -1,5 +1,5 @@
 class BaseCollectionException(Exception):
-
+    """Base collection exception class."""
     def __init__(self, message: str | None = None) -> None:
         if message is None:
             message = "Something went wrong during Collection operation"
@@ -7,6 +7,5 @@ class BaseCollectionException(Exception):
 
 
 class CollectionNotExistError(BaseCollectionException):
-    """Exception raised when collection not found"""
-
+    """Exception raised when collection not found."""
     pass

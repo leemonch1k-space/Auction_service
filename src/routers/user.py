@@ -28,6 +28,7 @@ from src.schemas import (
 )
 from src.security import JWTAuthManagerInterface
 
+
 auth_router = APIRouter(prefix="/accounts", tags=["Auth"])
 
 
@@ -42,6 +43,7 @@ async def create_account(
     db: Annotated[AsyncSession, Depends(get_db)],
     user_data: UserCreateSchema,
 ) -> UserReadSchema:
+    """Controller for creating new user."""
     try:
         return await create_new_user(
             db=db,
@@ -67,6 +69,7 @@ async def login(
     settings: Annotated[Settings, Depends(get_settings)],
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> LoginResponseSchema:
+    """Controller for user authentication."""
     user_data = UserLoginSchema(
         login=form_data.username,
         password=form_data.password
@@ -98,6 +101,7 @@ async def refresh_account_token(
     jwt_manager: Annotated[JWTAuthManagerInterface, Depends(get_jwt_manager)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> RefreshTokenResponseSchema:
+    """Controller for getting refresh token."""
     try:
         return await refresh_token(
             token=token,
