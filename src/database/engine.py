@@ -3,6 +3,8 @@ from sqlalchemy.orm import declarative_base
 
 from src.config.settings import get_settings
 
+# engine settings
+
 settings = get_settings()
 
 

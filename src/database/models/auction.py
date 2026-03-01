@@ -26,7 +26,6 @@ if TYPE_CHECKING:
 
 class CollectionModel(Base):
     """Table model for lots storage."""
-
     __tablename__ = "collections"
 
     id: Mapped[int] = mapped_column(
@@ -51,7 +50,6 @@ class CollectionModel(Base):
 
 class LotModel(Base):
     """Table model for lot."""
-
     __tablename__ = "lots"
 
     id: Mapped[int] = mapped_column(
@@ -85,7 +83,6 @@ class LotModel(Base):
 
 class AuctionModel(Base):
     """Table model for auction."""
-
     __tablename__ = "auctions"
 
     id: Mapped[int] = mapped_column(

@@ -11,10 +11,15 @@ from src.database.models import (
 from src.enums import AuctionStageEnum
 from src.websockets import manager
 
+
 logger = get_task_logger(__name__)
 
 
 async def send_lot_to_winner(auction_id: int, db: AsyncSession) -> None:
+    """
+    Service for celery task.
+    Method for sending lot to winner.
+    """
     auction_data = await db.get(AuctionModel, auction_id)
     if not auction_data:
         print(f"Auction {auction_id} not found.")

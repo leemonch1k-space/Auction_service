@@ -5,7 +5,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, computed_field
 
 
+# Main settings for environment
+
 class BaseAppSettings(BaseSettings):
+    """Base settings class."""
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -33,7 +36,7 @@ class BaseAppSettings(BaseSettings):
 
 
 class DevSettings(BaseAppSettings):
-    """DEV_SETTINGS: Local SQLite"""
+    """DEV_SETTINGS: Local SQLite."""
 
     ENVIRONMENT: str = "dev"
 
@@ -43,7 +46,7 @@ class DevSettings(BaseAppSettings):
 
 
 class Settings(BaseAppSettings):
-    """Main settings: postgres"""
+    """Main settings: postgres."""
 
     ENVIRONMENT: str = "docker"
 

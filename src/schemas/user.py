@@ -9,10 +9,12 @@ from src.validators import (
 
 
 class UserBaseSchema(BaseModel):
+    """Base schema for user."""
     login: str
 
 
 class UserCreateSchema(UserBaseSchema):
+    """Schema for creating user instance."""
     group: UserGroupEnum | None = None
     password: str
 
@@ -34,6 +36,7 @@ class UserCreateSchema(UserBaseSchema):
 
 
 class UserReadSchema(UserBaseSchema):
+    """Schema for user response."""
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -42,19 +45,23 @@ class UserReadSchema(UserBaseSchema):
 
 
 class UserLoginSchema(BaseModel):
+    """Schema for user authentication."""
     login: str
     password: str
 
 
 class LoginResponseSchema(BaseModel):
+    """Schema for authorization response."""
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
 
 
 class RefreshTokenSchema(BaseModel):
+    """Schema for creating access token."""
     refresh_token: str
 
 
 class RefreshTokenResponseSchema(BaseModel):
+    """Schema for access token response."""
     access_token: str

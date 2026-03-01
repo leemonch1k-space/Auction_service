@@ -12,7 +12,6 @@ class JWTAuthManager(JWTAuthManagerInterface):
     A manager for creating, decoding, and verifying JWT access
     and refresh tokens.
     """
-
     _ACCESS_KEY_TIMEDELTA_MINUTES = 60
     _REFRESH_KEY_TIMEDELTA_MINUTES = 60 * 24 * 7
 
@@ -32,6 +31,7 @@ class JWTAuthManager(JWTAuthManagerInterface):
         secret_key: str,
         expires_delta: timedelta,
     ) -> str:
+        """Method for creating token."""
         to_encode = data.copy()
         expire = datetime.now(timezone.utc) + expires_delta
         to_encode.update({"exp": expire})
@@ -47,6 +47,7 @@ class JWTAuthManager(JWTAuthManagerInterface):
         data: dict[str, object],
         expires_delta: Optional[timedelta] = None,
     ) -> str:
+        """Support method for creating access token."""
         return self._create_token(
             data,
             self._secret_key_access,
@@ -60,6 +61,7 @@ class JWTAuthManager(JWTAuthManagerInterface):
         data: dict[str, object],
         expires_delta: Optional[timedelta] = None,
     ) -> str:
+        """Support method for creating refresh token."""
         return self._create_token(
             data,
             self._secret_key_refresh,
@@ -69,6 +71,7 @@ class JWTAuthManager(JWTAuthManagerInterface):
         )
 
     def decode_access_token(self, token: str) -> dict[str, object]:
+        """Method for decoding access token."""
         try:
             payload = jwt.decode(
                 token, self._secret_key_access, algorithms=[self._algorithm]
@@ -80,6 +83,7 @@ class JWTAuthManager(JWTAuthManagerInterface):
             raise InvalidTokenError
 
     def decode_refresh_token(self, token: str) -> dict[str, object]:
+        """Method for decoding refresh token."""
         try:
             payload = jwt.decode(
                 token, self._secret_key_refresh, algorithms=[self._algorithm]
@@ -91,7 +95,9 @@ class JWTAuthManager(JWTAuthManagerInterface):
             raise InvalidTokenError
 
     def verify_refresh_token_or_raise(self, token: str) -> None:
+        """Support method for decoding refresh token."""
         self.decode_refresh_token(token)
 
     def verify_access_token_or_raise(self, token: str) -> None:
+        """Support method for decoding access token."""
         self.decode_access_token(token)

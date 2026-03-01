@@ -4,8 +4,11 @@ from src.database.celery_session import task_db_session
 from src.database.models import RefreshTokenModel
 from src.services import remove_expired_tokens
 
+# Celery tasks for auction
+
 
 async def _run_cleanup():
+    """Support method for celery task."""
     async with task_db_session() as db:
         await remove_expired_tokens(token_type=RefreshTokenModel, db=db)
 

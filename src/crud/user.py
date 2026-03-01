@@ -17,9 +17,9 @@ from src.enums import (
     UserGroupEnum,
 )
 from src.exceptions import (
-    UserAlreadyExist,
-    UserGroupNotExist,
-    IncorrectCredentials,
+    UserAlreadyExistError,
+    UserGroupNotExistError,
+    IncorrectCredentialsError,
 )
 from src.schemas import (
     UserCreateSchema,
@@ -38,6 +38,7 @@ async def get_user_by_login(
     db: Annotated[AsyncSession, Depends(get_db)],
     login: str,
 ) -> UserModel | None:
+    """support method for getting user instance by user logic."""
     result = await db.execute(
         select(UserModel)
         .where(UserModel.login == login)
@@ -51,10 +52,11 @@ async def create_new_user(
     db: Annotated[AsyncSession, Depends(get_db)],
     user_data: UserCreateSchema,
 ) -> UserReadSchema:
+    """Crud for creating new user."""
     existing_user = await get_user_by_login(db=db, login=user_data.login)
 
     if existing_user:
-        raise UserAlreadyExist(
+        raise UserAlreadyExistError(
             message="User with provided login already exists"
         )
 
@@ -66,7 +68,7 @@ async def create_new_user(
     )
     user_group = result.scalar_one_or_none()
     if not user_group:
-        raise UserGroupNotExist(message="Provided group does not exist")
+        raise UserGroupNotExistError(message="Provided group does not exist")
     try:
         user = UserModel.create(
             login=user_dict["login"],
@@ -94,14 +96,18 @@ async def login_user(
     settings: Annotated[Settings, Depends(get_settings)],
     login_data: UserLoginSchema,
 ) -> LoginResponseSchema:
+    """
+    Crud for user authentification.
+    Compatible with Swagger authorization.
+    """
     login = login_data.login
     user = await get_user_by_login(db=db, login=login)
     if not user:
-        raise IncorrectCredentials(message="Incorrect credentials")
+        raise IncorrectCredentialsError(message="Incorrect credentials")
 
     password = login_data.password
     if not user.check_password(password):
-        raise IncorrectCredentials(message="Incorrect credentials")
+        raise IncorrectCredentialsError(message="Incorrect credentials")
 
     token_data = {
         "user_id": user.id,
@@ -135,13 +141,14 @@ async def refresh_token(
     jwt_manager: Annotated[JWTAuthManagerInterface, Depends(get_jwt_manager)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> RefreshTokenResponseSchema:
+    """Crud for getting access token using refresh token."""
     payload = jwt_manager.decode_refresh_token(token.refresh_token)
 
     user_id = payload.get("user_id")
     login = payload.get("login")
 
     if not user_id or not login:
-        raise IncorrectCredentials(message="Invalid token credentials")
+        raise IncorrectCredentialsError(message="Invalid token credentials")
 
     new_token = jwt_manager.create_access_token(
         data={

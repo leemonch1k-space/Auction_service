@@ -1,5 +1,5 @@
 class BaseUserException(Exception):
-
+    """Base user exception class."""
     def __init__(self, message: str | None = None) -> None:
         if message is None:
             message = "Something went wrong during user operation"
@@ -7,32 +7,40 @@ class BaseUserException(Exception):
 
 
 class IncorrectPasswordError(BaseUserException):
+    """Exception raised when user sent incorrect password."""
     pass
 
 
 class IncorrectLoginError(BaseUserException):
+    """Exception raised when user sent incorrect login."""
     pass
 
 
-class UserAlreadyExist(BaseUserException):
+class UserAlreadyExistError(BaseUserException):
+    """Exception raised when user tries register already taken login."""
     pass
 
 
-class UserNotExist(BaseUserException):
+class UserNotExistError(BaseUserException):
+    """Exception raised when user not exists."""
     pass
 
 
-class UserGroupNotExist(BaseUserException):
+class UserGroupNotExistError(BaseUserException):
+    """Exception raised when user group not exists."""
     pass
 
 
-class IncorrectCredentials(BaseUserException):
+class IncorrectCredentialsError(BaseUserException):
+    """Exception raised when user incorrect credentials."""
     pass
 
 
-class UserPermissionDenied(BaseUserException):
+class UserPermissionDeniedError(BaseUserException):
+    """Exception raised when user not have enough permissions."""
     pass
 
 
-class InsufficientBalance(BaseUserException):
+class InsufficientBalanceError(BaseUserException):
+    """Exception raised when user not have enough balance."""
     pass

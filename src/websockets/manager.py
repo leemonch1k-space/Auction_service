@@ -3,25 +3,27 @@ from fastapi import WebSocket
 
 
 class ConnectionManager:
-    """Websocket connection manager"""
+    """Websocket connection manager."""
 
     def __init__(self) -> None:
         self.active_connections: Dict[int, List[WebSocket]] = {}
 
     async def connect(self, websocket: WebSocket, lot_id: int):
+        """Method for saving connections."""
         await websocket.accept()
         if lot_id not in self.active_connections:
             self.active_connections[lot_id] = []
         self.active_connections[lot_id].append(websocket)
 
     def disconnect(self, websocket: WebSocket, lot_id: int):
+        """Method for removing connections."""
         if lot_id in self.active_connections:
             self.active_connections[lot_id].remove(websocket)
             if not self.active_connections[lot_id]:
                 del self.active_connections[lot_id]
 
     async def broadcast(self, lot_id: int, message: dict):
-        """Send message everybody who lot_id"""
+        """Method for sending message to connected user."""
         if lot_id in self.active_connections:
             for connection in self.active_connections[lot_id]:
                 try:

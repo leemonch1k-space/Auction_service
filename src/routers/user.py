@@ -14,7 +14,7 @@ from src.config.dependencies import get_jwt_manager, get_db
 from src.config.settings import get_settings, Settings
 from src.exceptions import (
     BaseUserException,
-    IncorrectCredentials,
+    IncorrectCredentialsError,
     TokenExpiredError,
     InvalidTokenError,
 )
@@ -27,6 +27,7 @@ from src.schemas import (
     RefreshTokenSchema,
 )
 from src.security import JWTAuthManagerInterface
+
 
 auth_router = APIRouter(prefix="/accounts", tags=["Auth"])
 
@@ -42,6 +43,7 @@ async def create_account(
     db: Annotated[AsyncSession, Depends(get_db)],
     user_data: UserCreateSchema,
 ) -> UserReadSchema:
+    """Controller for creating new user."""
     try:
         return await create_new_user(
             db=db,
@@ -67,6 +69,7 @@ async def login(
     settings: Annotated[Settings, Depends(get_settings)],
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> LoginResponseSchema:
+    """Controller for user authentication."""
     user_data = UserLoginSchema(
         login=form_data.username,
         password=form_data.password
@@ -79,7 +82,7 @@ async def login(
             login_data=user_data,
         )
         return result
-    except IncorrectCredentials as error:
+    except IncorrectCredentialsError as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(error)
@@ -98,13 +101,14 @@ async def refresh_account_token(
     jwt_manager: Annotated[JWTAuthManagerInterface, Depends(get_jwt_manager)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> RefreshTokenResponseSchema:
+    """Controller for getting refresh token."""
     try:
         return await refresh_token(
             token=token,
             jwt_manager=jwt_manager,
             settings=settings,
         )
-    except (TokenExpiredError, InvalidTokenError, IncorrectCredentials):
+    except (TokenExpiredError, InvalidTokenError, IncorrectCredentialsError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Provided JWT Token incorrect or expired",

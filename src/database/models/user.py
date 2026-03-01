@@ -28,7 +28,6 @@ class UserGroupModel(Base):
     """
     Table model for user's permission group.
     """
-
     __tablename__ = "user_groups"
 
     id: Mapped[int] = mapped_column(
@@ -53,9 +52,8 @@ class UserModel(Base):
     """
     Table model for user.
     As simplification i didn't do a lot for it,
-    so it is just a simple model for user
+    so it is just a simple model for user.
     """
-
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -122,8 +120,7 @@ class UserModel(Base):
 
 
 class RefreshTokenModel(Base):
-    """Table model for refresh token"""
-
+    """Table model for refresh token."""
     __tablename__ = "refresh_tokens"
 
     id: Mapped[int] = mapped_column(

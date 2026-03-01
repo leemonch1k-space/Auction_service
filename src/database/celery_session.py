@@ -10,6 +10,8 @@ from sqlalchemy.pool import NullPool
 
 from src.config.settings import get_settings
 
+# celery dependency for getting session for celery
+
 settings = get_settings()
 
 
