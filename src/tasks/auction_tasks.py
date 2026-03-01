@@ -5,6 +5,7 @@ from src.services.auction import send_lot_to_winner
 
 # Celery tasks for auction
 
+
 async def _run_auction_closure(auction_id: int) -> None:
     """Support method for celery task."""
     async with task_db_session() as db:

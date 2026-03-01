@@ -6,6 +6,7 @@ from src.services import remove_expired_tokens
 
 # Celery tasks for auction
 
+
 async def _run_cleanup():
     """Support method for celery task."""
     async with task_db_session() as db:

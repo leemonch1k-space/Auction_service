@@ -2,6 +2,7 @@ import re
 
 # Validators for user
 
+
 def validate_password_strength(password: str) -> str:
     """Validation method for password validation."""
     if len(password) < 8:
