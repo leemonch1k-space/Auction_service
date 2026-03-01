@@ -6,7 +6,7 @@ class BaseCollectionException(Exception):
         super().__init__(message)
 
 
-class CollectionNotExist(BaseCollectionException):
+class CollectionNotExistError(BaseCollectionException):
     """Exception raised when collection not found"""
 
     pass

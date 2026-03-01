@@ -14,7 +14,7 @@ from src.config.dependencies import get_jwt_manager, get_db
 from src.config.settings import get_settings, Settings
 from src.exceptions import (
     BaseUserException,
-    IncorrectCredentials,
+    IncorrectCredentialsError,
     TokenExpiredError,
     InvalidTokenError,
 )
@@ -79,7 +79,7 @@ async def login(
             login_data=user_data,
         )
         return result
-    except IncorrectCredentials as error:
+    except IncorrectCredentialsError as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(error)
@@ -104,7 +104,7 @@ async def refresh_account_token(
             jwt_manager=jwt_manager,
             settings=settings,
         )
-    except (TokenExpiredError, InvalidTokenError, IncorrectCredentials):
+    except (TokenExpiredError, InvalidTokenError, IncorrectCredentialsError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Provided JWT Token incorrect or expired",

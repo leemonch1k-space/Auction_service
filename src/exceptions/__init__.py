@@ -5,28 +5,28 @@ from src.exceptions.token_exceptions import (
 from src.exceptions.user import (
     IncorrectPasswordError,
     IncorrectLoginError,
-    IncorrectCredentials,
-    UserNotExist,
-    UserAlreadyExist,
-    UserGroupNotExist,
-    UserPermissionDenied,
+    IncorrectCredentialsError,
+    UserNotExistError,
+    UserAlreadyExistError,
+    UserGroupNotExistError,
+    UserPermissionDeniedError,
     BaseUserException,
-    InsufficientBalance,
+    InsufficientBalanceError,
 )
 from src.exceptions.collection import (
     BaseCollectionException,
-    CollectionNotExist
+    CollectionNotExistError
 )
 from src.exceptions.lot import (
     BaseLotException,
-    LotItemNotExists,
+    LotItemNotExistsError,
     LotItemAlreadyOnSaleError,
 )
 from src.exceptions.auction import (
     BaseAuctionException,
-    AuctionAlreadyEnded,
-    SelfBetNotAllowed,
-    BidBelowMinimum,
+    AuctionAlreadyEndedError,
+    SelfBetNotAllowedError,
+    BidBelowMinimumError,
 )
 
 __all__ = [
@@ -34,20 +34,20 @@ __all__ = [
     "TokenExpiredError",
     "IncorrectPasswordError",
     "IncorrectLoginError",
-    "IncorrectCredentials",
-    "UserNotExist",
-    "UserAlreadyExist",
-    "UserGroupNotExist",
-    "UserPermissionDenied",
-    "InsufficientBalance",
+    "IncorrectCredentialsError",
+    "UserNotExistError",
+    "UserAlreadyExistError",
+    "UserGroupNotExistError",
+    "UserPermissionDeniedError",
+    "InsufficientBalanceError",
     "BaseUserException",
     "BaseCollectionException",
-    "CollectionNotExist",
+    "CollectionNotExistError",
     "BaseLotException",
-    "LotItemNotExists",
+    "LotItemNotExistsError",
     "LotItemAlreadyOnSaleError",
     "BaseAuctionException",
-    "AuctionAlreadyEnded",
-    "SelfBetNotAllowed",
-    "BidBelowMinimum",
+    "AuctionAlreadyEndedError",
+    "SelfBetNotAllowedError",
+    "BidBelowMinimumError",
 ]

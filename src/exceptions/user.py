@@ -14,25 +14,25 @@ class IncorrectLoginError(BaseUserException):
     pass
 
 
-class UserAlreadyExist(BaseUserException):
+class UserAlreadyExistError(BaseUserException):
     pass
 
 
-class UserNotExist(BaseUserException):
+class UserNotExistError(BaseUserException):
     pass
 
 
-class UserGroupNotExist(BaseUserException):
+class UserGroupNotExistError(BaseUserException):
     pass
 
 
-class IncorrectCredentials(BaseUserException):
+class IncorrectCredentialsError(BaseUserException):
     pass
 
 
-class UserPermissionDenied(BaseUserException):
+class UserPermissionDeniedError(BaseUserException):
     pass
 
 
-class InsufficientBalance(BaseUserException):
+class InsufficientBalanceError(BaseUserException):
     pass

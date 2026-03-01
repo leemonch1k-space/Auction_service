@@ -6,7 +6,7 @@ class BaseLotException(Exception):
         super().__init__(message)
 
 
-class LotItemNotExists(BaseLotException):
+class LotItemNotExistsError(BaseLotException):
     """Exception raised when lot item not found"""
 
     pass

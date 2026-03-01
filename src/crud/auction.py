@@ -17,13 +17,13 @@ from src.enums import (
     AuctionStageEnum,
 )
 from src.exceptions import (
-    CollectionNotExist,
-    LotItemNotExists,
+    CollectionNotExistError,
+    LotItemNotExistsError,
     LotItemAlreadyOnSaleError,
-    AuctionAlreadyEnded,
-    SelfBetNotAllowed,
-    InsufficientBalance,
-    BidBelowMinimum,
+    AuctionAlreadyEndedError,
+    SelfBetNotAllowedError,
+    InsufficientBalanceError,
+    BidBelowMinimumError,
 )
 from src.schemas import (
     AuctionResponseSchema,
@@ -53,7 +53,7 @@ async def get_user_collection(
     db_collection = await db.scalar(query)
 
     if not db_collection:
-        raise CollectionNotExist("Collection not exists!")
+        raise CollectionNotExistError("Collection not exists!")
 
     return db_collection
 
@@ -101,7 +101,7 @@ async def create_new_auction(
     lot = await db.scalar(query)
 
     if not lot:
-        raise LotItemNotExists("Lot not found or you do not own this lot")
+        raise LotItemNotExistsError("Lot not found or you do not own this lot")
 
     if lot.is_on_auction:
         raise LotItemAlreadyOnSaleError("This lot is already on auction")
@@ -167,22 +167,22 @@ async def make_bet(
     if not auction_data:
         lot = await db.get(LotModel, lot_id)
         if not lot:
-            raise LotItemNotExists("Lot does not exist")
-        raise AuctionAlreadyEnded("Auction is not active")
+            raise LotItemNotExistsError("Lot does not exist")
+        raise AuctionAlreadyEndedError("Auction is not active")
 
     if auction_data.status != AuctionStageEnum.RUNNING:
-        raise AuctionAlreadyEnded("Auction already ended")
+        raise AuctionAlreadyEndedError("Auction already ended")
 
     if auction_data.creator_id == authenticated_user_data.id:
-        raise SelfBetNotAllowed("You can't place a bet on your own lot")
+        raise SelfBetNotAllowedError("You can't place a bet on your own lot")
 
     if authenticated_user_data.balance < bet_data.bet:
-        raise InsufficientBalance("Insufficient funds")
+        raise InsufficientBalanceError("Insufficient funds")
 
     min_required_bid = auction_data.current_price + auction_data.bid_step
 
     if bet_data.bet < min_required_bid:
-        raise BidBelowMinimum(f"Bid must be at least {min_required_bid}")
+        raise BidBelowMinimumError(f"Bid must be at least {min_required_bid}")
 
     auction_data.current_price = bet_data.bet
     auction_data.top_bidder_id = authenticated_user_data.id

@@ -6,19 +6,19 @@ class BaseAuctionException(Exception):
         super().__init__(message)
 
 
-class AuctionAlreadyEnded(BaseAuctionException):
+class AuctionAlreadyEndedError(BaseAuctionException):
     """Exception raised when user interacts with ended auction"""
 
     pass
 
 
-class SelfBetNotAllowed(BaseAuctionException):
+class SelfBetNotAllowedError(BaseAuctionException):
     """Exception raised when user tries place a bet on his own lot"""
 
     pass
 
 
-class BidBelowMinimum(BaseAuctionException):
+class BidBelowMinimumError(BaseAuctionException):
     """Exception raised when user tries to place a bid lower than the minimum required amount"""  # noqa
 
     pass
